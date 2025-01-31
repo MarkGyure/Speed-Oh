@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _runSpeed;
     private float rotation = 0;
     private bool isTurning;
+    private bool canDoubleJump = true;
     private bool isMoving;
     private float direction;
     private InputAction turn;
@@ -61,11 +62,15 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void OnJump() //faster way of routing buttons than Event Listeners
     {
-        Debug.Log(IsGrounded());
         if (IsGrounded())
         {
             rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
             //This way, the jump happens without overwriting the existing velocity
+        }
+        else if(canDoubleJump)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
+            canDoubleJump = false;
         }
     }
 
@@ -154,6 +159,11 @@ public class PlayerController : MonoBehaviour
         {
             transform.Rotate(0, 360 * rotation * Time.deltaTime, 0);
         }
+
+        if(IsGrounded())
+        {
+            canDoubleJump = true;
+        }
     }
 
     /// <summary>
@@ -162,6 +172,7 @@ public class PlayerController : MonoBehaviour
     /// <returns></returns>
     private bool IsGrounded()
     {
+
         return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
     }
 
