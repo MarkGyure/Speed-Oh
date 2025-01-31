@@ -1,9 +1,9 @@
 /*****************************************************************************
 // File Name : PlayerController.cs
 // Author : Nick Moritz
-// Creation Date : March 2, 2024
+// Creation Date : January 28, 2025
 //
-// Brief Description : This is the controller for the Player. It controls their movement, attacks, and jumps 
+// Brief Description : This is the controller for the Player. It controls their movement
 *****************************************************************************/
 using System.Collections;
 using UnityEngine;
@@ -20,11 +20,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject _backMove;
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _turnSpeed;
+    [SerializeField] private float _runSpeed;
     private float rotation = 0;
     private bool isTurning;
     private bool isMoving;
     private float direction;
-
     private InputAction turn;
     private InputAction forwardBackward;
 
@@ -42,8 +42,8 @@ public class PlayerController : MonoBehaviour
 
         turn.started += Turn_started;
         turn.canceled += Turn_canceled;
-        forwardBackward.started += ForwardBackward_started;
-        forwardBackward.canceled += ForwardBackward_canceled;
+        //forwardBackward.started += ForwardBackward_started;
+        //forwardBackward.canceled += ForwardBackward_canceled;
     }
 
     /// <summary>
@@ -53,14 +53,15 @@ public class PlayerController : MonoBehaviour
     {
         turn.started -= Turn_started;
         turn.canceled -= Turn_canceled;
-        forwardBackward.started -= ForwardBackward_started;
-        forwardBackward.canceled -= ForwardBackward_canceled;
+        //forwardBackward.started -= ForwardBackward_started;
+        //forwardBackward.canceled -= ForwardBackward_canceled;
     }
     /// <summary>
     /// Makes the player jump when the player hits spacebar and is on the ground
     /// </summary>
     void OnJump() //faster way of routing buttons than Event Listeners
     {
+        Debug.Log(IsGrounded());
         if (IsGrounded())
         {
             rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
@@ -87,7 +88,7 @@ public class PlayerController : MonoBehaviour
     {
         isTurning = true;
     }
-
+    /*
     /// <summary>
     /// Sets the isMoving parameter to false when the button is released
     /// </summary>
@@ -104,7 +105,7 @@ public class PlayerController : MonoBehaviour
     private void ForwardBackward_started(InputAction.CallbackContext obj)
     {
         isMoving = true;
-    }
+    }*/
 
     /// <summary>
     /// Restarts the scene whene the player hits the R button
@@ -129,7 +130,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (isMoving)
+        /*if (isMoving)
         {
             direction = forwardBackward.ReadValue<float>();
             if (direction < 0)
@@ -144,7 +145,10 @@ public class PlayerController : MonoBehaviour
             {
                 transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, 1.5f * Time.deltaTime);
             }
-        }
+        }*/
+
+        transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, _runSpeed * Time.deltaTime);
+
         rotation = _turnSpeed * turn.ReadValue<float>();
         if (isTurning)
         {
