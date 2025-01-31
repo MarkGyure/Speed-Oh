@@ -173,7 +173,7 @@ public class PlayerController : MonoBehaviour
     private bool IsGrounded()
     {
 
-        return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
+        return Physics.CheckSphere(_groundCheck.transform.position, 0.1f, _layerMask);
     }
 
 }
