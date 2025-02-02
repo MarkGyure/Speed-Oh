@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private float direction;
     private InputAction turn;
     private InputAction forwardBackward;
+    private InputAction look;
 
     private Rigidbody rb;
 
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
         _playerInput.currentActionMap.Enable();
         turn = _playerInput.currentActionMap.FindAction("Turn");
         forwardBackward = _playerInput.currentActionMap.FindAction("ForwardBackward");
+        look = _playerInput.currentActionMap.FindAction("Look");
 
         turn.started += Turn_started;
         turn.canceled += Turn_canceled;
@@ -174,6 +176,11 @@ public class PlayerController : MonoBehaviour
     {
 
         return Physics.CheckSphere(_groundCheck.transform.position, 0.1f, _layerMask);
+    }
+
+    public Vector2 GetMouseDelta()
+    {
+        return look.ReadValue<Vector2>();
     }
 
 }
