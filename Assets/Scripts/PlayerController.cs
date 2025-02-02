@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
         _playerInput.currentActionMap.Enable();
         turn = _playerInput.currentActionMap.FindAction("Turn");
         forwardBackward = _playerInput.currentActionMap.FindAction("ForwardBackward");
+        look = _playerInput.currentActionMap.FindAction("Look");
 
         turn.started += Turn_started;
         turn.canceled += Turn_canceled;
