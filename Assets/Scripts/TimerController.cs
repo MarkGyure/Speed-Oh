@@ -10,9 +10,11 @@ public class TimerController : MonoBehaviour
     bool stopwatchActive = false;
     float currentTime=0;
     [SerializeField] TMP_Text timetext;
+    private FinishScript finishScript;
 
     private void Start()
     {
+        finishScript = FindObjectOfType<FinishScript>();
         StartStopwatch();
     }
 
@@ -29,9 +31,12 @@ public class TimerController : MonoBehaviour
     public void StartStopwatch()
     {
         stopwatchActive = true;
+        
     }
     public void StopStopwatch()
     {
         stopwatchActive = false;
+        finishScript.getTime(timetext.text);
     }
+   
 }
