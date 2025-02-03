@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _turnSpeed;
     [SerializeField] private float _runSpeed;
+    private float appliedSpeed;
     private float rotation = 0;
     private bool isTurning;
     private bool canDoubleJump = true;
@@ -45,8 +46,9 @@ public class PlayerController : MonoBehaviour
 
         turn.started += Turn_started;
         turn.canceled += Turn_canceled;
-        //forwardBackward.started += ForwardBackward_started;
-        //forwardBackward.canceled += ForwardBackward_canceled;
+        forwardBackward.started += ForwardBackward_started;
+        forwardBackward.canceled += ForwardBackward_canceled;
+        appliedSpeed = _runSpeed;
     }
 
     /// <summary>
@@ -56,8 +58,8 @@ public class PlayerController : MonoBehaviour
     {
         turn.started -= Turn_started;
         turn.canceled -= Turn_canceled;
-        //forwardBackward.started -= ForwardBackward_started;
-        //forwardBackward.canceled -= ForwardBackward_canceled;
+        forwardBackward.started -= ForwardBackward_started;
+        forwardBackward.canceled -= ForwardBackward_canceled;
     }
     /// <summary>
     /// Makes the player jump when the player hits spacebar and is on the ground
@@ -95,7 +97,7 @@ public class PlayerController : MonoBehaviour
     {
         isTurning = true;
     }
-    /*
+    
     /// <summary>
     /// Sets the isMoving parameter to false when the button is released
     /// </summary>
@@ -112,7 +114,7 @@ public class PlayerController : MonoBehaviour
     private void ForwardBackward_started(InputAction.CallbackContext obj)
     {
         isMoving = true;
-    }*/
+    }
 
     /// <summary>
     /// Restarts the scene whene the player hits the R button
@@ -137,12 +139,12 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        /*if (isMoving)
+        if (isMoving)
         {
             direction = forwardBackward.ReadValue<float>();
             if (direction < 0)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _backMove.transform.position, 1.5f * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, _backMove.transform.position, _runSpeed * Time.deltaTime);
                 //There are Empty Objects in front of and behind the Player, which rotate when it rotates. The way it moves
                 //forward and backward is by moving towwards those Empty Objects. It's a strange way to move it,
                 //but the only other way I could think of to change it's move direction with it's rotation was 
@@ -150,11 +152,9 @@ public class PlayerController : MonoBehaviour
             }
             if (direction > 0)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, 1.5f * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, _runSpeed * Time.deltaTime);
             }
-        }*/
-
-        transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, _runSpeed * Time.deltaTime);
+        }
 
         rotation = _turnSpeed * turn.ReadValue<float>();
         if (isTurning)
