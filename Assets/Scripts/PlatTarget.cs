@@ -6,11 +6,12 @@ using UnityEngine;
 public class PlatTarget : MonoBehaviour
 {
     [SerializeField] private GameObject Player;
-    [SerializeField] private float Pspeed;
+    private PlayerController playerController;
+   // [SerializeField] private float Pspeed;
 
     void Start()
     {
-        
+        playerController = FindObjectOfType<PlayerController>();
     }
 
     
@@ -23,7 +24,10 @@ public class PlatTarget : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Pspeed++;
+            Debug.Log("Hit Target");
+            playerController.SpeedUp();
+            Destroy(gameObject);
+           // Pspeed++;
         }
     }
 }
