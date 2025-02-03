@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject _backMove;
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _turnSpeed;
+    [SerializeField] private float _accelDivision;
+    [SerializeField] private float _accelInterval;
     public float _runSpeed;
     private float appliedSpeed;
     private float rotation = 0;
@@ -27,6 +29,9 @@ public class PlayerController : MonoBehaviour
     private bool canDoubleJump = true;
     private bool isMoving;
     private float direction;
+    private bool canAccel = true;
+    private float currentAccel;
+    private bool goingForward;
     private InputAction turn;
     private InputAction forwardBackward;
     private InputAction look;
@@ -49,6 +54,7 @@ public class PlayerController : MonoBehaviour
         forwardBackward.started += ForwardBackward_started;
         forwardBackward.canceled += ForwardBackward_canceled;
         appliedSpeed = _runSpeed;
+        currentAccel = 0;
     }
 
     /// <summary>
@@ -144,7 +150,21 @@ public class PlayerController : MonoBehaviour
             direction = forwardBackward.ReadValue<float>();
             if (direction < 0)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _backMove.transform.position, _runSpeed * Time.deltaTime);
+                if (goingForward)
+                {
+                    goingForward = false;
+                    currentAccel = 0;
+                }
+
+                if (canAccel && currentAccel < _accelDivision)
+                {
+                    currentAccel++;
+                    appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                    canAccel = false;
+                    StartCoroutine(Accelerate());
+                }
+                transform.position = Vector3.MoveTowards(transform.position, _backMove.transform.position, appliedSpeed * Time.deltaTime);
+
                 //There are Empty Objects in front of and behind the Player, which rotate when it rotates. The way it moves
                 //forward and backward is by moving towwards those Empty Objects. It's a strange way to move it,
                 //but the only other way I could think of to change it's move direction with it's rotation was 
@@ -152,7 +172,20 @@ public class PlayerController : MonoBehaviour
             }
             if (direction > 0)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, _runSpeed * Time.deltaTime);
+                if (!goingForward)
+                {
+                    goingForward = true;
+                    currentAccel = 0;
+                }
+
+                if (canAccel && currentAccel < _accelDivision)
+                {
+                    currentAccel++;
+                    appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                    canAccel = false;
+                    StartCoroutine(Accelerate());
+                }
+                transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, appliedSpeed * Time.deltaTime);
             }
         }
 
@@ -183,6 +216,15 @@ public class PlayerController : MonoBehaviour
         return look.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// Maintains the Acceleration Interval
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator Accelerate()
+    {
+        yield return new WaitForSeconds(_accelInterval);
+        canAccel = true;
+    }
     public void SpeedUp()
     {
         _runSpeed += 3;
