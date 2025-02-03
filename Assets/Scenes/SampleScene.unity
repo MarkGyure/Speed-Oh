@@ -1054,7 +1054,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _turnSpeed: 0.5
-  _runSpeed: 1
+  _runSpeed: 5
+  _accelDivision: 5
+  _accelInterval: 1
 --- !u!1 &1612642836
 GameObject:
   m_ObjectHideFlags: 0
