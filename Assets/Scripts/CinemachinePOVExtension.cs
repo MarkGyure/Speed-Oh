@@ -26,7 +26,7 @@ public class CinemachinePOVExtension : CinemachineExtension
                 if (startingRotation == null) startingRotation = transform.localRotation.eulerAngles;
                 deltaInput = controller.GetMouseDelta();
                 startingRotation.x += deltaInput.x * verticalSpeed * Time.deltaTime;
-                startingRotation.y += deltaInput.y * horizontalSpeed * Time.deltaTime;
+                startingRotation.y += -(deltaInput.y * horizontalSpeed * Time.deltaTime);
                 startingRotation.y = Mathf.Clamp(startingRotation.y, -clampAngle, clampAngle);
                 state.RawOrientation = Quaternion.Euler(startingRotation.y, startingRotation.x, 0f);
             }
