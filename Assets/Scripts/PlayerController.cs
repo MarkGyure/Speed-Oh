@@ -22,8 +22,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _turnSpeed;
     [SerializeField] private float _accelDivision;
     [SerializeField] private float _accelInterval;
-    public float _runSpeed;
-    private float appliedSpeed;
+    [SerializeField] private float _runSpeed;
+    public float appliedSpeed;
     private float rotation = 0;
     private bool isTurning;
     private bool canDoubleJump = true;
