@@ -2261,6 +2261,7 @@ MonoBehaviour:
   start: {fileID: 0}
   finish: {fileID: 0}
   player: {fileID: 0}
+  playerIcon: {fileID: 3880619851006684487}
   mask: {fileID: 5834033304755577723}
 --- !u!1 &9053671322456403572
 GameObject:
