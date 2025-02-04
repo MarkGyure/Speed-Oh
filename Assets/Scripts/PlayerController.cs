@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour
     private bool canAccel = true;
     private float currentAccel;
     private bool goingForward;
+    private bool goingBackward;
+    private bool braking;
     private InputAction turn;
     private InputAction forwardBackward;
     private InputAction look;
@@ -53,7 +55,6 @@ public class PlayerController : MonoBehaviour
         turn.canceled += Turn_canceled;
         forwardBackward.started += ForwardBackward_started;
         forwardBackward.canceled += ForwardBackward_canceled;
-        appliedSpeed = _runSpeed;
         currentAccel = 0;
     }
 
@@ -150,19 +151,40 @@ public class PlayerController : MonoBehaviour
             direction = forwardBackward.ReadValue<float>();
             if (direction < 0)
             {
-                if (goingForward)
+                if (canAccel && currentAccel < _accelDivision) 
                 {
-                    goingForward = false;
-                    currentAccel = 0;
+                    if (braking)
+                    {
+                        currentAccel--;
+                        if (currentAccel == 0)
+                        {
+                            braking = false;
+                        }
+                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        canAccel = false;
+                        StartCoroutine(Accelerate());
+                    }
+                    else if (goingForward)
+                    {
+                        currentAccel--;
+                        goingForward = false;
+                        goingBackward = true;
+                        braking = true;
+                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        canAccel = false;
+                        StartCoroutine(Accelerate());
+                    }
+                    else
+                    {
+                        currentAccel++;
+                        goingForward = false;
+                        goingBackward = true;
+                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        canAccel = false;
+                        StartCoroutine(Accelerate());
+                    }
                 }
-
-                if (canAccel && currentAccel < _accelDivision)
-                {
-                    currentAccel++;
-                    appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
-                    canAccel = false;
-                    StartCoroutine(Accelerate());
-                }
+                
                 transform.position = Vector3.MoveTowards(transform.position, _backMove.transform.position, appliedSpeed * Time.deltaTime);
 
                 //There are Empty Objects in front of and behind the Player, which rotate when it rotates. The way it moves
@@ -172,19 +194,41 @@ public class PlayerController : MonoBehaviour
             }
             if (direction > 0)
             {
-                if (!goingForward)
+                if (canAccel && currentAccel < _accelDivision) 
                 {
-                    goingForward = true;
-                    currentAccel = 0;
-                }
 
-                if (canAccel && currentAccel < _accelDivision)
-                {
-                    currentAccel++;
-                    appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
-                    canAccel = false;
-                    StartCoroutine(Accelerate());
+                    if (braking)
+                    {
+                        currentAccel--;
+                        if (currentAccel == 0)
+                        {
+                            braking = false;
+                        }
+                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        canAccel = false;
+                        StartCoroutine(Accelerate());
+                    }
+                    else if(goingBackward)
+                    {
+                        currentAccel--;
+                        goingForward = true;
+                        goingBackward = true;
+                        braking = true;  
+                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        canAccel = false;
+                        StartCoroutine(Accelerate());         
+                    }
+                    else
+                    {
+                        currentAccel++;
+                        goingForward = true;
+                        goingBackward = false;
+                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        canAccel = false;
+                        StartCoroutine(Accelerate());
+                    }
                 }
+                
                 transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, appliedSpeed * Time.deltaTime);
             }
         }

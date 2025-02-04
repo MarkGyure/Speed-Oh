@@ -132,7 +132,7 @@
                 {
                     "name": "1D Axis",
                     "id": "78904df4-7c8b-43e6-b25f-3292614fbb67",
-                    "path": "1DAxis",
+                    "path": "1DAxis(whichSideWins=2)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -165,7 +165,7 @@
                 {
                     "name": "1D Axis",
                     "id": "d302cb74-a232-4600-9e54-b09174482962",
-                    "path": "1DAxis",
+                    "path": "1DAxis(whichSideWins=2)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

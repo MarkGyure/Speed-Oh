@@ -1125,6 +1125,7 @@ MonoBehaviour:
   _accelDivision: 5
   _accelInterval: 1
   _runSpeed: 5
+  appliedSpeed: 0
 --- !u!1 &1579369160
 GameObject:
   m_ObjectHideFlags: 0
