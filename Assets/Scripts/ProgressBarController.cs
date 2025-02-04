@@ -11,7 +11,9 @@ public class ProgressBarController : MonoBehaviour
     [SerializeField] private GameObject start;
     [SerializeField] private GameObject finish;
     [SerializeField] private GameObject player;
+    [SerializeField] private Image playerIcon;
     [SerializeField] private Image mask;
+    private double defaulltIconDistance=-181.8;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,5 +32,7 @@ public class ProgressBarController : MonoBehaviour
     {
         float fillAmount = (float)currentDistance / (float)maximumDistance;
         mask.fillAmount = fillAmount;
+        playerIcon.rectTransform.localPosition = new Vector3((float)defaulltIconDistance + (fillAmount * 378),156,0);
+        
     }
 }
