@@ -229,11 +229,11 @@ public class PlayerController : MonoBehaviour
         {
             if (canAccel && currentAccel < _accelDivision)
             {
-                currentAccel++;
-                appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                currentAccel++;       
                 canAccel = false;
                 StartCoroutine(Accelerate());
             }
+            appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
         }
 
         if (IsGrounded())
