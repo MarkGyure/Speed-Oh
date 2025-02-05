@@ -32,7 +32,7 @@ public class ProgressBarController : MonoBehaviour
     {
         float fillAmount = (float)currentDistance / (float)maximumDistance;
         mask.fillAmount = fillAmount;
-        playerIcon.rectTransform.localPosition = new Vector3((float)defaulltIconDistance + (fillAmount * 378),156,0);
+        playerIcon.rectTransform.localPosition = new Vector3((float)defaulltIconDistance + (fillAmount * 390),156,0);
         
     }
 }
