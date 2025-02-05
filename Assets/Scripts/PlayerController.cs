@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject _groundCheck;
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _accelInterval;
+    [SerializeField] private float _accelDivision;
     [SerializeField] private float _runSpeed;
     [SerializeField] private CharacterController controller;
     public float appliedSpeed;
@@ -199,10 +200,7 @@ public class PlayerController : MonoBehaviour
         move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
         controller.Move(move * Time.deltaTime * appliedSpeed);
 
-        /*if (move != Vector3.zero)
-        {
-            gameObject.transform.forward = move;
-        }*/
+        
 
         // Double Jump
         if (Input.GetButtonDown("Jump") && canDoubleJump && !canJump && !IsGrounded())
@@ -222,6 +220,21 @@ public class PlayerController : MonoBehaviour
         playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
 
+        if (move == Vector3.zero)
+        {
+            currentAccel = 0;
+            appliedSpeed = 0;
+        }
+        else if (move != Vector3.zero)
+        {
+            if (canAccel && currentAccel < _accelDivision)
+            {
+                currentAccel++;
+                appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                canAccel = false;
+                StartCoroutine(Accelerate());
+            }
+        }
 
         if (IsGrounded())
         {
@@ -237,7 +250,7 @@ public class PlayerController : MonoBehaviour
     private bool IsGrounded()
     {
 
-        return Physics.CheckSphere(_groundCheck.transform.position, 0.1f, _layerMask);
+        return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
     }
 
     public Vector2 GetPlayerMovement()
