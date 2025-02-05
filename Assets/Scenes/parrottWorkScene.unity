@@ -1220,16 +1220,14 @@ MonoBehaviour:
   _player: {fileID: 1458354355}
   _playerInput: {fileID: 1458354361}
   _jumpValue: 5
+  gravityValue: -9.81
   _groundCheck: {fileID: 746316679}
-  _frontMove: {fileID: 1668862146}
-  _backMove: {fileID: 525693728}
   _layerMask:
     serializedVersion: 2
     m_Bits: 64
-  _turnSpeed: 0.5
-  _accelDivision: 5
   _accelInterval: 1
   _runSpeed: 5
+  controller: {fileID: 0}
   appliedSpeed: 0
 --- !u!1 &1579369160
 GameObject:
