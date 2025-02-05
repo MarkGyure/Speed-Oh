@@ -8,6 +8,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -15,18 +16,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject _player;
     [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private float _jumpValue = 5f;
+    [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private GameObject _groundCheck;
-    [SerializeField] private GameObject _frontMove;
-    [SerializeField] private GameObject _backMove;
     [SerializeField] private LayerMask _layerMask;
-    [SerializeField] private float _turnSpeed;
-    [SerializeField] private float _accelDivision;
     [SerializeField] private float _accelInterval;
     [SerializeField] private float _runSpeed;
+    [SerializeField] private CharacterController controller;
     public float appliedSpeed;
-    private float rotation = 0;
-    private bool isTurning;
     private bool canDoubleJump = true;
+    private bool canJump = true;
     private bool isMoving;
     private float direction;
     private bool canAccel = true;
@@ -34,8 +32,9 @@ public class PlayerController : MonoBehaviour
     private bool goingForward;
     private bool goingBackward;
     private bool braking;
-    private InputAction turn;
-    private InputAction forwardBackward;
+    private Vector3 playerVelocity;
+
+    private InputAction movement;
     private InputAction look;
 
     private Rigidbody rb;
@@ -47,14 +46,9 @@ public class PlayerController : MonoBehaviour
     {
         rb = _player.GetComponent<Rigidbody>();
         _playerInput.currentActionMap.Enable();
-        turn = _playerInput.currentActionMap.FindAction("Turn");
-        forwardBackward = _playerInput.currentActionMap.FindAction("ForwardBackward");
         look = _playerInput.currentActionMap.FindAction("Look");
-
-        turn.started += Turn_started;
-        turn.canceled += Turn_canceled;
-        forwardBackward.started += ForwardBackward_started;
-        forwardBackward.canceled += ForwardBackward_canceled;
+        movement = _playerInput.currentActionMap.FindAction("Movement");
+        
         currentAccel = 0;
     }
 
@@ -63,10 +57,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void OnDestroy()
     {
-        turn.started -= Turn_started;
-        turn.canceled -= Turn_canceled;
-        forwardBackward.started -= ForwardBackward_started;
-        forwardBackward.canceled -= ForwardBackward_canceled;
+        
     }
     /// <summary>
     /// Makes the player jump when the player hits spacebar and is on the ground
@@ -85,43 +76,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Sets the isTurning parameter to false when the player releases the button. I know it's weird to 
-    /// have a mix of event listeners and the other input routing method, but I don't know how to do this with the 
-    /// newer method, so I had to use event listeners
-    /// </summary>
-    /// <param name="obj"></param>
-    private void Turn_canceled(InputAction.CallbackContext obj)
-    {
-        isTurning = false;
-    }
-
-    /// <summary>
-    /// Sets the isTurning paramenter to true when the player presses the button
-    /// </summary>
-    /// <param name="obj"></param>
-    private void Turn_started(InputAction.CallbackContext obj)
-    {
-        isTurning = true;
-    }
-    
-    /// <summary>
-    /// Sets the isMoving parameter to false when the button is released
-    /// </summary>
-    /// <param name="obj"></param>
-    private void ForwardBackward_canceled(InputAction.CallbackContext obj)
-    {
-        isMoving = false;
-    }
-
-    /// <summary>
-    /// Sets the isMoving parameter to true when the button is pressed
-    /// </summary>
-    /// <param name="obj"></param>
-    private void ForwardBackward_started(InputAction.CallbackContext obj)
-    {
-        isMoving = true;
-    }
 
     /// <summary>
     /// Restarts the scene whene the player hits the R button
@@ -146,7 +100,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (isMoving)
+        /*if (isMoving)
         {
             direction = forwardBackward.ReadValue<float>();
             if (direction < 0)
@@ -160,7 +114,7 @@ public class PlayerController : MonoBehaviour
                         {
                             braking = false;
                         }
-                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
                         canAccel = false;
                         StartCoroutine(Accelerate());
                     }
@@ -170,7 +124,7 @@ public class PlayerController : MonoBehaviour
                         goingForward = false;
                         goingBackward = true;
                         braking = true;
-                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
                         canAccel = false;
                         StartCoroutine(Accelerate());
                     }
@@ -204,7 +158,7 @@ public class PlayerController : MonoBehaviour
                         {
                             braking = false;
                         }
-                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
                         canAccel = false;
                         StartCoroutine(Accelerate());
                     }
@@ -214,7 +168,7 @@ public class PlayerController : MonoBehaviour
                         goingForward = true;
                         goingBackward = true;
                         braking = true;  
-                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
+                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
                         canAccel = false;
                         StartCoroutine(Accelerate());         
                     }
@@ -231,16 +185,43 @@ public class PlayerController : MonoBehaviour
                 
                 transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, appliedSpeed * Time.deltaTime);
             }
+        }*/
+
+        if (IsGrounded() && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
         }
 
-        rotation = _turnSpeed * turn.ReadValue<float>();
-        if (isTurning)
+        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        controller.Move(move * Time.deltaTime * appliedSpeed);
+
+        if (move != Vector3.zero)
         {
-            transform.Rotate(0, 360 * rotation * Time.deltaTime, 0);
+            gameObject.transform.forward = move;
         }
 
-        if(IsGrounded())
+        // Double Jump
+        if (Input.GetButtonDown("Jump") && canDoubleJump && !canJump && !IsGrounded())
         {
+            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
+            canDoubleJump = false;
+        }
+
+        // Makes the player jump
+        if (Input.GetButtonDown("Jump") && IsGrounded())
+        {
+            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
+            canJump = false;
+        }
+        
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+
+
+        if (IsGrounded())
+        {
+            canJump = true;
             canDoubleJump = true;
         }
     }
@@ -253,6 +234,11 @@ public class PlayerController : MonoBehaviour
     {
 
         return Physics.CheckSphere(_groundCheck.transform.position, 0.1f, _layerMask);
+    }
+
+    public Vector2 GetPlayerMovement()
+    {
+        return movement.ReadValue<Vector2>();
     }
 
     public Vector2 GetMouseDelta()
