@@ -18,7 +18,7 @@ public class FinishScript : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         timerController.StopStopwatch();
-        finishText.text = "You Win, Your final time was" + finalTime+ "\nYour top speed was (speed stuff here)";
+        finishText.text = finalTime;
         finishText.gameObject.SetActive(true);
 
     }
