@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     private bool goingBackward;
     private bool braking;
     private Vector3 playerVelocity;
+    private Transform cameraTransform;
 
     private InputAction movement;
     private InputAction look;
@@ -48,6 +49,8 @@ public class PlayerController : MonoBehaviour
         _playerInput.currentActionMap.Enable();
         look = _playerInput.currentActionMap.FindAction("Look");
         movement = _playerInput.currentActionMap.FindAction("Movement");
+        
+        cameraTransform = Camera.main.transform;
         
         currentAccel = 0;
     }
@@ -193,12 +196,13 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
         controller.Move(move * Time.deltaTime * appliedSpeed);
 
-        if (move != Vector3.zero)
+        /*if (move != Vector3.zero)
         {
             gameObject.transform.forward = move;
-        }
+        }*/
 
         // Double Jump
         if (Input.GetButtonDown("Jump") && canDoubleJump && !canJump && !IsGrounded())
