@@ -22,17 +22,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _accelInterval;
     [SerializeField] private float _accelDivision;
     [SerializeField] private float _runSpeed;
+    [SerializeField] private float _runSpeedIncrease = 3;
     [SerializeField] private CharacterController controller;
     public float appliedSpeed;
     private bool canDoubleJump = true;
     private bool canJump = true;
-    private bool isMoving;
-    private float direction;
     private bool canAccel = true;
     private float currentAccel;
-    private bool goingForward;
-    private bool goingBackward;
-    private bool braking;
     private Vector3 playerVelocity;
     private Transform cameraTransform;
 
@@ -104,92 +100,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        /*if (isMoving)
-        {
-            direction = forwardBackward.ReadValue<float>();
-            if (direction < 0)
-            {
-                if (canAccel && currentAccel < _accelDivision) 
-                {
-                    if (braking)
-                    {
-                        currentAccel--;
-                        if (currentAccel == 0)
-                        {
-                            braking = false;
-                        }
-                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
-                        canAccel = false;
-                        StartCoroutine(Accelerate());
-                    }
-                    else if (goingForward)
-                    {
-                        currentAccel--;
-                        goingForward = false;
-                        goingBackward = true;
-                        braking = true;
-                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
-                        canAccel = false;
-                        StartCoroutine(Accelerate());
-                    }
-                    else
-                    {
-                        currentAccel++;
-                        goingForward = false;
-                        goingBackward = true;
-                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
-                        canAccel = false;
-                        StartCoroutine(Accelerate());
-                    }
-                }
-                
-                transform.position = Vector3.MoveTowards(transform.position, _backMove.transform.position, appliedSpeed * Time.deltaTime);
-
-                //There are Empty Objects in front of and behind the Player, which rotate when it rotates. The way it moves
-                //forward and backward is by moving towwards those Empty Objects. It's a strange way to move it,
-                //but the only other way I could think of to change it's move direction with it's rotation was 
-                //EulerAngles, which give me a headache at the best of times
-            }
-            if (direction > 0)
-            {
-                if (canAccel && currentAccel < _accelDivision) 
-                {
-
-                    if (braking)
-                    {
-                        currentAccel--;
-                        if (currentAccel == 0)
-                        {
-                            braking = false;
-                        }
-                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
-                        canAccel = false;
-                        StartCoroutine(Accelerate());
-                    }
-                    else if(goingBackward)
-                    {
-                        currentAccel--;
-                        goingForward = true;
-                        goingBackward = true;
-                        braking = true;  
-                        appliedSpeed = -(_runSpeed * currentAccel) / _accelDivision;
-                        canAccel = false;
-                        StartCoroutine(Accelerate());         
-                    }
-                    else
-                    {
-                        currentAccel++;
-                        goingForward = true;
-                        goingBackward = false;
-                        appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
-                        canAccel = false;
-                        StartCoroutine(Accelerate());
-                    }
-                }
-                
-                transform.position = Vector3.MoveTowards(transform.position, _frontMove.transform.position, appliedSpeed * Time.deltaTime);
-            }
-        }*/
 
         if (IsGrounded() && playerVelocity.y < 0)
         {
@@ -200,7 +110,6 @@ public class PlayerController : MonoBehaviour
         move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
         controller.Move(move * Time.deltaTime * appliedSpeed);
 
-        
 
         // Double Jump
         if (Input.GetButtonDown("Jump") && canDoubleJump && !canJump && !IsGrounded())
@@ -253,11 +162,19 @@ public class PlayerController : MonoBehaviour
         return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
     }
 
+    /// <summary>
+    /// Gets PlayerMovement Vector3 composite from the Inputs
+    /// </summary>
+    /// <returns></returns>
     public Vector2 GetPlayerMovement()
     {
         return movement.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// Gets MouseDelta Vector2 from the Inputs
+    /// </summary>
+    /// <returns></returns>
     public Vector2 GetMouseDelta()
     {
         return look.ReadValue<Vector2>();
@@ -274,7 +191,7 @@ public class PlayerController : MonoBehaviour
     }
     public void SpeedUp()
     {
-        _runSpeed += 3;
+        _runSpeed += _runSpeedIncrease;
         Debug.Log(_runSpeed);
     }
 
