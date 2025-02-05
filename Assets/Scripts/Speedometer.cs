@@ -50,8 +50,8 @@ public class Speedometer : MonoBehaviour
     /// </summary>
     void Update()
     {
-        speed = PlayerScript.appliedSpeed - 1; //Getting the player's current speed
-        displaySpeed = speed * 5f; //The flavor speed for the display
+        speed = PlayerScript.appliedSpeed; //Getting the player's current speed
+        displaySpeed = Mathf.Round(speed * 5f); //The flavor speed for the display
 
         SpeedText.text = displaySpeed.ToString(); //Sets display text to current, player speed
 
