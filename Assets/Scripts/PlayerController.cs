@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _runSpeedIncrease = 3;
     [SerializeField] private CharacterController controller;
     public float appliedSpeed;
-    public float appliedGravityValue;
+    //public float appliedGravityValue;
     private bool canDoubleJump = true;
     private bool canJump = true;
     private bool canAccel = true;
@@ -122,14 +122,14 @@ public class PlayerController : MonoBehaviour
         // Makes the player jump
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
-            appliedGravityValue = gravityValue;
-            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * appliedGravityValue);
+            //appliedGravityValue = gravityValue;
+            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
             canJump = false;
         }
 
 
 
-        playerVelocity.y += appliedGravityValue * Time.deltaTime;
+        playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
 
         if (move == Vector3.zero)
@@ -148,12 +148,21 @@ public class PlayerController : MonoBehaviour
             appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
         }
 
-        if (IsGrounded())
+        if (canJump)
         {
-            if(!canJump)
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, _layerMask))
             {
-                appliedGravityValue = gravityValue * 2;
+                transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
             }
+        }
+
+            if (IsGrounded())
+        {
+            //if(!canJump)
+            //{
+            //    appliedGravityValue = gravityValue * 2;
+            //}
 
             canJump = true;
             canDoubleJump = true;
@@ -167,8 +176,9 @@ public class PlayerController : MonoBehaviour
     /// <returns></returns>
     private bool IsGrounded()
     {
-
-        return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
+        return controller.isGrounded;
+        //return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
+        //return (playerVelocity.y <= 0 && Physics.CheckSphere(_groundCheck.transform.position, 0.01f, _layerMask));
     }
 
     /// <summary>
