@@ -1091,6 +1091,7 @@ MonoBehaviour:
   _accelInterval: 1
   _accelDivision: 5
   _runSpeed: 5
+  _runSpeedIncrease: 0
   controller: {fileID: 1458354363}
   appliedSpeed: 5
 --- !u!143 &1458354363
