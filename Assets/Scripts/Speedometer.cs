@@ -7,6 +7,7 @@
                        track the player's speed.
 *****************************************************************************/
 
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -29,16 +30,21 @@ public class Speedometer : MonoBehaviour
     private float speedNormalized;
 
     [SerializeField] private PlayerController PlayerScript;
+    [SerializeField] private CinemachineVirtualCamera VirtualCamera;
     [SerializeField] private TMP_Text SpeedText;
     [SerializeField] private Transform DialTransform;
     [SerializeField] private Image RadialImage;
+    [SerializeField] private float fovMin;
+    [SerializeField] private float fovMax;
 
     /// <summary>
     /// Finds the player script and sets max speed detection on start
     /// </summary>
     void Start()
     {
+        //Finding required objects
         PlayerScript = FindAnyObjectByType<PlayerController>();
+        VirtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
 
         //Setting the max speed threshold and initial display speed
         maxSpeed = 30f;
@@ -58,6 +64,22 @@ public class Speedometer : MonoBehaviour
         //Call angle functions
         SetRadialFill();
         SetSpeedRotation();
+
+        if (speed == 0)
+        {
+            VirtualCamera.m_Lens.FieldOfView = fovMin;
+        }
+        else
+        {
+            if (VirtualCamera.m_Lens.FieldOfView < fovMax)
+            {
+                VirtualCamera.m_Lens.FieldOfView = fovMin + speed;
+            }
+            else
+            {
+                VirtualCamera.m_Lens.FieldOfView = fovMax;
+            }    
+        }
     }
 
     /// <summary>

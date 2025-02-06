@@ -86,8 +86,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clampAngle: 80
-  horizontalSpeed: 12
-  verticalSpeed: 12
+  horizontalSpeed: 13
+  verticalSpeed: 13
   controller: {fileID: 0}
 --- !u!1 &1297850512709112697
 GameObject:
