@@ -1094,6 +1094,7 @@ MonoBehaviour:
   _runSpeedIncrease: 3
   controller: {fileID: 1458354363}
   appliedSpeed: 5
+  appliedGravityValue: 0
 --- !u!143 &1458354363
 CharacterController:
   m_ObjectHideFlags: 0

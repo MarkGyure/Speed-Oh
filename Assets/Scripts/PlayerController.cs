@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _runSpeedIncrease = 3;
     [SerializeField] private CharacterController controller;
     public float appliedSpeed;
+    public float appliedGravityValue;
     private bool canDoubleJump = true;
     private bool canJump = true;
     private bool canAccel = true;
@@ -112,21 +113,23 @@ public class PlayerController : MonoBehaviour
 
 
         // Double Jump
-        if (Input.GetButtonDown("Jump") && canDoubleJump && !canJump && !IsGrounded())
+        /*if (Input.GetButtonDown("Jump") && canDoubleJump && !canJump && !IsGrounded())
         {
             playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
             canDoubleJump = false;
-        }
+        }*/
 
         // Makes the player jump
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
-            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
+            appliedGravityValue = gravityValue;
+            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * appliedGravityValue);
             canJump = false;
         }
-        
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
+
+
+        playerVelocity.y += appliedGravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
 
         if (move == Vector3.zero)
@@ -147,8 +150,14 @@ public class PlayerController : MonoBehaviour
 
         if (IsGrounded())
         {
+            if(!canJump)
+            {
+                appliedGravityValue = gravityValue * 2;
+            }
+
             canJump = true;
             canDoubleJump = true;
+            
         }
     }
 
