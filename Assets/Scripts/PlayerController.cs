@@ -126,6 +126,7 @@ public class PlayerController : MonoBehaviour
             //appliedGravityValue = gravityValue;
             playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
             canJump = false;
+            Debug.Log("Jump");
         }
 
 
@@ -154,16 +155,12 @@ public class PlayerController : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, _layerMask))
             {
-                transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+                transform.position = new Vector3(transform.position.x, hit.point.y + 1.01f, transform.position.z);
             }
         }
 
             if (IsGrounded())
         {
-            //if(!canJump)
-            //{
-            //    appliedGravityValue = gravityValue * 2;
-            //}
 
             canJump = true;
             canDoubleJump = true;
@@ -177,7 +174,7 @@ public class PlayerController : MonoBehaviour
     /// <returns></returns>
     private bool IsGrounded()
     {
-        return controller.isGrounded;
+        return (controller.isGrounded || Physics.CheckSphere(_groundCheck.transform.position, 0.2f, _layerMask));
         //return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
         //return (playerVelocity.y <= 0 && Physics.CheckSphere(_groundCheck.transform.position, 0.01f, _layerMask));
     }
