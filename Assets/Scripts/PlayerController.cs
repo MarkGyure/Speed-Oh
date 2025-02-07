@@ -103,10 +103,10 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (IsGrounded() && playerVelocity.y < 0)
+        /*if (IsGrounded() && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
-        }
+        }*/
 
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             //appliedGravityValue = gravityValue;
-            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
+            playerVelocity.y = Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
             canJump = false;
             Debug.Log("Jump");
         }
@@ -143,28 +143,32 @@ public class PlayerController : MonoBehaviour
         {
             if (canAccel && currentAccel < _accelDivision)
             {
-                currentAccel++;       
+                currentAccel++;
                 canAccel = false;
                 StartCoroutine(Accelerate());
             }
             appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
         }
 
-        if (canJump)
-        {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, _layerMask))
-            {
-                transform.position = new Vector3(transform.position.x, hit.point.y + 1.01f, transform.position.z);
-            }
-        }
+        //if (canJump)
+        //{
+        //    RaycastHit hit;
+        //    if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, _layerMask))
+        //    {
+        //        transform.position = new Vector3(transform.position.x, hit.point.y + 1f, transform.position.z);
+        //    }
+        //}
 
-            if (IsGrounded())
+        if (IsGrounded())
         {
 
             canJump = true;
             canDoubleJump = true;
-            
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, _layerMask))
+            {
+                transform.position = new Vector3(transform.position.x, hit.point.y + 1f, transform.position.z);
+            }
         }
     }
 
@@ -174,7 +178,18 @@ public class PlayerController : MonoBehaviour
     /// <returns></returns>
     private bool IsGrounded()
     {
-        return (controller.isGrounded || Physics.CheckSphere(_groundCheck.transform.position, 0.2f, _layerMask));
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.25f, _layerMask))
+        {
+            print(hit.transform.name);
+            return true;
+        }
+        else 
+        { 
+            return false; 
+        }
+
+        //return (controller.isGrounded);//|| Physics.CheckSphere(_groundCheck.transform.position, 0.2f, _layerMask));
         //return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
         //return (playerVelocity.y <= 0 && Physics.CheckSphere(_groundCheck.transform.position, 0.01f, _layerMask));
     }
