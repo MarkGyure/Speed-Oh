@@ -893,7 +893,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.506279, y: 1.3980653, z: -1.1852074}
-  m_LocalScale: {x: 38.5937, y: 0.17269, z: 40.597763}
+  m_LocalScale: {x: 38.5937, y: -0.34581175, z: 40.597763}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1094,7 +1094,6 @@ MonoBehaviour:
   _runSpeedIncrease: 3
   controller: {fileID: 1458354363}
   appliedSpeed: 5
-  appliedGravityValue: 0
 --- !u!143 &1458354363
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1119,7 +1118,7 @@ CharacterController:
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1579369160
 GameObject:
