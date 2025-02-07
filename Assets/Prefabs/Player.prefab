@@ -161,11 +161,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _accelInterval: 0.1
-  _accelDivision: 5
+  _accelDivision: 10
   _runSpeed: 5
   _runSpeedIncrease: 3
   controller: {fileID: 7902409494810367646}
   appliedSpeed: 5
+  appliedGravityValue: -100
 --- !u!114 &8102478785969930195
 MonoBehaviour:
   m_ObjectHideFlags: 0

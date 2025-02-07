@@ -51,6 +51,8 @@ public class PlayerController : MonoBehaviour
         cameraTransform = Camera.main.transform;
         
         currentAccel = 0;
+
+        Cursor.visible = false;
     }
 
     /// <summary>
@@ -101,7 +103,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-
         if (IsGrounded() && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;

@@ -650,7 +650,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 431.11407, y: 247.38208}
+  m_AnchoredPosition: {x: 431.11407, y: 382}
   m_SizeDelta: {x: 657.2029, y: 187.1609}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &894776926
@@ -681,6 +681,10 @@ MonoBehaviour:
 
     Land
     on precision spots to get a boost of speed.
+
+
+    All speed built up over time
+    is retained, even after stopping and starting again.
 
 
     There are no limits.'

@@ -73,6 +73,7 @@ public class PauseMenu : MonoBehaviour
         if (isPause == false)
         {
             Time.timeScale = 0;
+            Cursor.visible = true;
             PauseBG.enabled = true;
             ButtonGroup.SetActive(true);
             isPause = true;
@@ -80,6 +81,7 @@ public class PauseMenu : MonoBehaviour
         else
         {
             Time.timeScale = 1;
+            Cursor.visible = false;
             PauseBG.enabled = false;
             ButtonGroup.SetActive(false);
             isPause = false;
