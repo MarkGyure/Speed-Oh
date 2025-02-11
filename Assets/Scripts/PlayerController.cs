@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
 // File Name : PlayerController.cs
 // Author : Nick Moritz
 // Creation Date : January 28, 2025
@@ -37,6 +37,9 @@ public class PlayerController : MonoBehaviour
     private InputAction look;
 
     private Rigidbody rb;
+    public TrajectorRenderer tr;
+    private Vector3 lastPosition;
+    private Vector3 actualVelocity;
 
     /// <summary>
     /// Turns on the Rigidbody, the Action Map, and the movement listeners
@@ -53,6 +56,8 @@ public class PlayerController : MonoBehaviour
         currentAccel = 0;
 
         Cursor.visible = false;
+
+        lastPosition = transform.position;
     }
 
     /// <summary>
@@ -65,19 +70,27 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Makes the player jump when the player hits spacebar and is on the ground
     /// </summary>
-    void OnJump() //faster way of routing buttons than Event Listeners
+    void OnJump()
     {
         if (IsGrounded())
         {
+           
             rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
-            //This way, the jump happens without overwriting the existing velocity
+            actualVelocity = rb.velocity; // Store velocity at takeoff
+            
+            tr.DrawTrajectory(actualVelocity); // Draw trajectory
         }
-        else if(canDoubleJump)
+        else if (canDoubleJump)
         {
+            
             rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
+            actualVelocity = rb.velocity;
             canDoubleJump = false;
+           
+            tr.DrawTrajectory(actualVelocity);
         }
     }
+
 
 
     /// <summary>
@@ -103,129 +116,44 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        /*if (IsGrounded() && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-        }*/
-
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
-        controller.Move(move * Time.deltaTime * appliedSpeed);
 
+        // Apply movement to Rigidbody
+        rb.velocity = new Vector3(move.x * appliedSpeed, rb.velocity.y, move.z * appliedSpeed);
 
-        // Double Jump
-        /*if (Input.GetButtonDown("Jump") && canDoubleJump && !canJump && !IsGrounded())
+        // Apply Gravity
+        rb.velocity += Vector3.up * gravityValue * Time.deltaTime;
+
+        actualVelocity = rb.velocity; // Track movement velocity for trajectory
+
+        if (!IsGrounded())
         {
-            playerVelocity.y += Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
-            canDoubleJump = false;
-        }*/
-
-        // Makes the player jump
-        if (Input.GetButtonDown("Jump") && IsGrounded())
+            tr.DrawTrajectory(actualVelocity); // Continuously update trajectory
+            
+        }
+        else
         {
-            //appliedGravityValue = gravityValue;
-            playerVelocity.y = Mathf.Sqrt(_jumpValue * -2.0f * gravityValue);
-            canJump = false;
-            Debug.Log("Jump");
+            tr.ClearTrajectory(); // Clear the trajectory when grounded
         }
 
-
-
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
-
-        if (move == Vector3.zero)
-        {
-            currentAccel = 0;
-            appliedSpeed = 0;
-        }
-        else if (move != Vector3.zero)
-        {
-            if (canAccel && currentAccel < _accelDivision)
-            {
-                currentAccel++;
-                canAccel = false;
-                StartCoroutine(Accelerate());
-            }
-            appliedSpeed = (_runSpeed * currentAccel) / _accelDivision;
-        }
-
-        //if (canJump)
-        //{
-        //    RaycastHit hit;
-        //    if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, _layerMask))
-        //    {
-        //        transform.position = new Vector3(transform.position.x, hit.point.y + 1f, transform.position.z);
-        //    }
-        //}
-
-        if (IsGrounded())
-        {
-
-            canJump = true;
-            canDoubleJump = true;
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, _layerMask))
-            {
-                transform.position = new Vector3(transform.position.x, hit.point.y + 1f, transform.position.z);
-            }
-        }
+        lastPosition = transform.position;
     }
 
-    /// <summary>
-    /// Checks if the player is on the ground, then returns a bool value
-    /// </summary>
-    /// <returns></returns>
     private bool IsGrounded()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.25f, _layerMask))
-        {
-            print(hit.transform.name);
-            return true;
-        }
-        else 
-        { 
-            return false; 
-        }
+        Vector3 rayStart = transform.position + Vector3.up * 0.1f; // Move ray start above the feet
 
-        //return (controller.isGrounded);//|| Physics.CheckSphere(_groundCheck.transform.position, 0.2f, _layerMask));
-        //return Physics.CheckSphere(_groundCheck.transform.position, 0.3f, _layerMask);
-        //return (playerVelocity.y <= 0 && Physics.CheckSphere(_groundCheck.transform.position, 0.01f, _layerMask));
+        bool grounded = Physics.Raycast(rayStart, Vector3.down, out hit, 1.35f, LayerMask.GetMask("Ground"));
+
+        return grounded;
     }
 
-    /// <summary>
-    /// Gets PlayerMovement Vector3 composite from the Inputs
-    /// </summary>
-    /// <returns></returns>
-    public Vector2 GetPlayerMovement()
-    {
-        return movement.ReadValue<Vector2>();
-    }
 
-    /// <summary>
-    /// Gets MouseDelta Vector2 from the Inputs
-    /// </summary>
-    /// <returns></returns>
     public Vector2 GetMouseDelta()
     {
-        return look.ReadValue<Vector2>();
+       return look.ReadValue<Vector2>();
     }
-
-    /// <summary>
-    /// Maintains the Acceleration Interval
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator Accelerate()
-    {
-        yield return new WaitForSeconds(_accelInterval);
-        canAccel = true;
-    }
-    public void SpeedUp()
-    {
-        _runSpeed += _runSpeedIncrease;
-        Debug.Log(_runSpeed);
-    }
-
 }
 
