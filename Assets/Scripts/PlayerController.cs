@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     private InputAction movement;
     private InputAction look;
 
-    private Rigidbody rb;
+    public Rigidbody rb;
     public TrajectorRenderer tr;
     private Vector3 lastPosition;
     private Vector3 actualVelocity;
