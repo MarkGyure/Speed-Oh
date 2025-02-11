@@ -6,6 +6,6 @@ public class SceneTransitionButton : MonoBehaviour
 {
     public void StartSceneTransition(int id)
     {
-        
+        SceneChanger.Instance.LoadScene(id);
     }
 }
