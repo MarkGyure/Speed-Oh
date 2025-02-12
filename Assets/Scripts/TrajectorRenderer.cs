@@ -44,16 +44,7 @@ public class TrajectorRenderer : MonoBehaviour
             }
         }
 
-        if (points.Count > 1)
-        {
-            Debug.Log(" Trajectory has " + points.Count + " points.");
-        }
-        else
-        {
-            Debug.Log(" Not enough points, clearing trajectory.");
-            lineRenderer.positionCount = 0;
-            return;
-        }
+        
 
         lineRenderer.positionCount = points.Count;
         lineRenderer.SetPositions(points.ToArray());
