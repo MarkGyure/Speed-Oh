@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System;
+using UnityEngine.InputSystem.UI;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class MainMenuController : MonoBehaviour
 
     internal UIShowHide ShowingMainMenuUI;
 
-    private PlayerInput _playerInput;
+    public InputSystemUIInputModule Input;
 
     //Start is called before the first frame update
     void Start()
@@ -22,11 +23,11 @@ public class MainMenuController : MonoBehaviour
     private InputAction back;
 
     //Start is called before the first frame update
-    /*void Awake()
+    void Awake()
     {
-        back = _playerInput.currentActionMap.FindAction("Back");
+        back = Input.actionsAsset.FindAction("Cancel");
         back.started += CloseCurrentMenu;
-    }*/
+    }
 
     private void CloseCurrentMenu(InputAction.CallbackContext context)
     {
@@ -35,8 +36,8 @@ public class MainMenuController : MonoBehaviour
         ShowingMainMenuUI.ButtonPress();
     }
 
-    /*private void OnDestroy()
+    private void OnDestroy()
     {
-        back.started -= Close
-    }*/
+        back.started -= CloseCurrentMenu;
+    }
 }

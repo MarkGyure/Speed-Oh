@@ -43,4 +43,9 @@ public class UIShowHide : MonoBehaviour
         }
         _associatedAnimator.SetTrigger(_animateOutTrigger);
     }
+
+    public void Test()
+    {
+        print("Hit Button");
+    }
 }
