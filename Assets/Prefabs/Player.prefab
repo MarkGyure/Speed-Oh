@@ -254,7 +254,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4375841950453103399}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 04332bebe0cdea8408625ff01d73c367, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -367,7 +367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 4375841950453103399}
   _playerInput: {fileID: 8102478785969930195}
-  _jumpValue: 10
+  _jumpValue: 7
   gravityValue: -9.81
   _groundCheck: {fileID: 7573735271052211277}
   _layerMask:
@@ -379,6 +379,7 @@ MonoBehaviour:
   _runSpeedIncrease: 3
   controller: {fileID: 7902409494810367646}
   appliedSpeed: 5
+  rb: {fileID: 0}
   tr: {fileID: 6873293611246529605}
 --- !u!1 &6886810887178621472
 GameObject:
