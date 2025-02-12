@@ -128,12 +128,14 @@ public class PlayerController : MonoBehaviour
         Vector2 inputMovement = movement.ReadValue<Vector2>();
         playerMovment.x = inputMovement.x * currentPlayerSpeed;
         playerMovment.z = inputMovement.y * currentPlayerSpeed;
+
+        //Previous inputs used before they were released
         prevPlayerMovement.x = prevInputMovement.x * currentPlayerSpeed;
         prevPlayerMovement.z = prevInputMovement.y * currentPlayerSpeed;
         //assinging y input to the z axis 
 
         //Controlling gradual speed increase and decrease
-        if (inputMovement == Vector2.zero)
+        if (inputMovement == Vector2.zero) //Slow down over time
         {
             if (currentPlayerSpeed > 0)
             {
@@ -153,7 +155,7 @@ public class PlayerController : MonoBehaviour
             {
                 currentPlayerSpeed -= speedIncrease * 2;
             }
-            else
+            else //Move normally, picking up speed as you go
             {
                 if (currentPlayerSpeed < MaxPlayerSpeed)
                 {
