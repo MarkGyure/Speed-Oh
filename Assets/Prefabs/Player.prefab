@@ -150,14 +150,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lineRenderer: {fileID: 4983091658190274711}
-  player: {fileID: 0}
+  ground_player: {fileID: 0}
   resolution: 1
   timeStep: 0.05
-  platformMask:
+  groundMask:
     serializedVersion: 2
     m_Bits: 0
-  landingCirclePrefab: {fileID: 0}
-  activeLandingCircle: {fileID: 0}
 --- !u!1 &4375841950453103399
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,9 +383,10 @@ MonoBehaviour:
   rb: {fileID: 0}
   tr: {fileID: 6873293611246529605}
   playerMovment: {x: 0, y: 0, z: 0}
+  prevPlayerMovement: {x: 0, y: 0, z: 0}
   currentPlayerSpeed: 0
   MaxPlayerSpeed: 5
-  speedIncrease: 0.1
+  speedIncrease: 0.01
 --- !u!1 &6886810887178621472
 GameObject:
   m_ObjectHideFlags: 0
