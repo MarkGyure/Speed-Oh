@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrajectorRenderer : MonoBehaviour
+public class TrajectoryRenderer : MonoBehaviour
 {
-   [SerializeField] private LineRenderer lineRenderer;
-   [SerializeField] private Transform ground_player;
-   [SerializeField] private int resolution = 1; // Number of points in the line
-   [SerializeField] private float timeStep = 0.05f; // Time between each point
-   [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LineRenderer lineRenderer;
+    [SerializeField] private Transform player;
+    [SerializeField] private int resolution = 30; // Number of points in the line
+    [SerializeField] private float timeStep = 0.05f;
+    [SerializeField] private LayerMask platformMask; 
+    [SerializeField] private GameObject landingCirclePrefab;
+
+    [SerializeField] private GameObject activeLandingCircle;
 
     private void Start()
     {
@@ -18,50 +21,62 @@ public class TrajectorRenderer : MonoBehaviour
 
     public void DrawTrajectory(Vector3 initialVelocity)
     {
-       
-
-        if (initialVelocity.magnitude < 0.1f)
-        {
-           
-            return;
-        }
-
         List<Vector3> points = new List<Vector3>();
-        Vector3 startPosition = ground_player.transform.position;
+        Vector3 startPosition = player.position;
         Vector3 velocity = initialVelocity;
         float t = 0;
+        bool hitDetected = false;
+        Vector3 landingPoint = Vector3.zero;
 
-        for (int i = 0; i < 30; i++) // Increased resolution
+        for (int i = 0; i < resolution; i++)
         {
             Vector3 point = startPosition + velocity * t + 0.5f * Physics.gravity * t * t;
             points.Add(point);
-            t += 0.05f;
+            t += timeStep;
 
-            // Stop drawing if trajectory hits ground
-            if (Physics.Raycast(point, Vector3.down, 0.1f, LayerMask.GetMask("Ground")))
+            // Check if trajectory collides with a platform
+            if (Physics.Raycast(point, Vector3.down, out RaycastHit hit, 0.5f, platformMask))
             {
+                hitDetected = true;
+                landingPoint = hit.point;
+
                 break;
             }
         }
 
-        if (points.Count > 1)
+        lineRenderer.positionCount = points.Count;
+        lineRenderer.SetPositions(points.ToArray());
+
+        // Spawn or update the landing circle
+        if (hitDetected)
         {
-            Debug.Log(" Trajectory has " + points.Count + " points.");
+            PlaceLandingCircle(landingPoint);
+        }
+        else if (activeLandingCircle)
+        {
+            activeLandingCircle.SetActive(false); // Hide if no valid landing
+        }
+    }
+
+    private void PlaceLandingCircle(Vector3 position)
+    {
+        if (activeLandingCircle == null)
+        {
+            activeLandingCircle = Instantiate(landingCirclePrefab, position, Quaternion.identity);
         }
         else
         {
-            Debug.Log(" Not enough points, clearing trajectory.");
-            lineRenderer.positionCount = 0;
-            return;
+            activeLandingCircle.SetActive(true);
+            activeLandingCircle.transform.position = position;
         }
-
-        lineRenderer.positionCount = points.Count;
-        lineRenderer.SetPositions(points.ToArray());
     }
-
 
     public void ClearTrajectory()
     {
-        lineRenderer.positionCount = 0; // Hide the line when grounded
+        lineRenderer.positionCount = 0;
+
+        if (activeLandingCircle)
+            activeLandingCircle.SetActive(false); // Hide landing marker
     }
 }
+
