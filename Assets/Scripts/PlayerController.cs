@@ -65,9 +65,6 @@ public class PlayerController : MonoBehaviour
 
         lastPosition = transform.position;
 
-        
-
-
     }
 
 
@@ -132,13 +129,34 @@ public class PlayerController : MonoBehaviour
         playerMovment.z = inputMovement.y * currentPlayerSpeed;
         //assinging y input to the z axis 
 
-        if (currentPlayerSpeed < MaxPlayerSpeed)
+        //Controlling gradual speed increase and decrease
+        if (inputMovement == Vector2.zero)
         {
-            currentPlayerSpeed += speedIncrease;
+            if (currentPlayerSpeed > 0)
+            {
+                currentPlayerSpeed -= speedIncrease;
+            }
+            else
+            {
+                currentPlayerSpeed = 0;
+            }
+
+            //Player movement only takes the facing camera direction and current speed for motion
+            playerMovment = cameraTransform.forward * currentPlayerSpeed;
         }
         else
         {
-            currentPlayerSpeed = MaxPlayerSpeed;
+            if (currentPlayerSpeed < MaxPlayerSpeed)
+            {
+                currentPlayerSpeed += speedIncrease;
+            }
+            else
+            {
+                currentPlayerSpeed = MaxPlayerSpeed;
+            }
+
+            //Player movement uses both camera direction and player input for motion
+            playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
         }
     }
 
@@ -149,7 +167,7 @@ public class PlayerController : MonoBehaviour
     {
 
         OnMove();
-        playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+        //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
         //player turns the direction of the camera 
         playerMovment.y = 0f;
         // Apply movement to Rigidbody
