@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
     private InputAction look;
 
     public Rigidbody rb;
-    public TrajectoryRenderer tr;
+    public TrajectorRenderer tr;
     private Vector3 lastPosition;
     private Vector3 actualVelocity;
     [SerializeField] private Vector3 playerMovment;
