@@ -5,6 +5,7 @@
 //
 // Brief Description : This is the controller for the Player. It controls their movement
 *****************************************************************************/
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private float _jumpValue = 5f;
     [SerializeField] private float gravityValue = -9.81f;
+    [SerializeField] private float _playerSpeed = 5f;
     [SerializeField] private GameObject _groundCheck;
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _accelInterval;
@@ -40,7 +42,11 @@ public class PlayerController : MonoBehaviour
     public TrajectorRenderer tr;
     private Vector3 lastPosition;
     private Vector3 actualVelocity;
+    [SerializeField] private Vector3 playerMovment;
 
+    [SerializeField] private float currentPlayerSpeed;
+    public float MaxPlayerSpeed;
+    [SerializeField] private float speedIncrease;
     /// <summary>
     /// Turns on the Rigidbody, the Action Map, and the movement listeners
     /// </summary>
@@ -58,7 +64,9 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
 
         lastPosition = transform.position;
+
     }
+
 
     /// <summary>
     /// Turns off the event listeners when the player is dead
@@ -77,7 +85,8 @@ public class PlayerController : MonoBehaviour
            
             rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
             actualVelocity = rb.velocity; // Store velocity at takeoff
-            
+            canDoubleJump = true;
+
             tr.DrawTrajectory(actualVelocity); // Draw trajectory
         }
         else if (canDoubleJump)
@@ -110,17 +119,60 @@ public class PlayerController : MonoBehaviour
         UnityEngine.Application.Quit();
     }
 
+    /// <summary>
+    /// player movments
+    /// </summary>
+    private void OnMove()
+    {
+        Vector2 inputMovement = movement.ReadValue<Vector2>();
+        playerMovment.x = inputMovement.x * currentPlayerSpeed;
+        playerMovment.z = inputMovement.y * currentPlayerSpeed;
+        //assinging y input to the z axis 
+
+        //Controlling gradual speed increase and decrease
+        if (inputMovement == Vector2.zero)
+        {
+            if (currentPlayerSpeed > 0)
+            {
+                currentPlayerSpeed -= speedIncrease;
+            }
+            else
+            {
+                currentPlayerSpeed = 0;
+            }
+
+            //Player movement only takes the facing camera direction and current speed for motion
+            playerMovment = cameraTransform.forward * currentPlayerSpeed;
+        }
+        else
+        {
+            if (currentPlayerSpeed < MaxPlayerSpeed)
+            {
+                currentPlayerSpeed += speedIncrease;
+            }
+            else
+            {
+                currentPlayerSpeed = MaxPlayerSpeed;
+            }
+
+            //Player movement uses both camera direction and player input for motion
+            playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+        }
+    }
 
     /// <summary>
     /// Moves and rotates the player when isMoving and isTurning are true
     /// </summary>
     void Update()
     {
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
 
+        OnMove();
+        //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+        //player turns the direction of the camera 
+        playerMovment.y = 0f;
         // Apply movement to Rigidbody
-        rb.velocity = new Vector3(move.x * appliedSpeed, rb.velocity.y, move.z * appliedSpeed);
+        rb.velocity = new Vector3(playerMovment.x, rb.velocity.y, playerMovment.z);
+
 
         // Apply Gravity
         rb.velocity += Vector3.up * gravityValue * Time.deltaTime;
