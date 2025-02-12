@@ -93,7 +93,6 @@ public class PlayerController : MonoBehaviour
         }
         else if (canDoubleJump)
         {
-            
             rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
             actualVelocity = rb.velocity;
             canDoubleJump = false;
@@ -133,8 +132,6 @@ public class PlayerController : MonoBehaviour
         prevPlayerMovement.z = prevInputMovement.y * currentPlayerSpeed;
         //assinging y input to the z axis 
 
-        print(prevInputMovement);
-
         //Controlling gradual speed increase and decrease
         if (inputMovement == Vector2.zero)
         {
@@ -152,13 +149,20 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (currentPlayerSpeed < MaxPlayerSpeed)
+            if (prevPlayerMovement.z < 0) //Braking functionality
             {
-                currentPlayerSpeed += speedIncrease;
+                currentPlayerSpeed -= speedIncrease * 2;
             }
             else
             {
-                currentPlayerSpeed = MaxPlayerSpeed;
+                if (currentPlayerSpeed < MaxPlayerSpeed)
+                {
+                    currentPlayerSpeed += speedIncrease;
+                }
+                else
+                {
+                    currentPlayerSpeed = MaxPlayerSpeed;
+                }
             }
 
             //Player movement uses both camera direction and player input for motion
@@ -172,7 +176,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-
+        print(isGrounded);
         OnMove();
         //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
         //player turns the direction of the camera 
