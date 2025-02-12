@@ -5,6 +5,7 @@
 //
 // Brief Description : This is the controller for the Player. It controls their movement
 *****************************************************************************/
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private float _jumpValue = 5f;
     [SerializeField] private float gravityValue = -9.81f;
+    [SerializeField] private float _playerSpeed = 5f;
     [SerializeField] private GameObject _groundCheck;
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _accelInterval;
@@ -40,7 +42,7 @@ public class PlayerController : MonoBehaviour
     public TrajectorRenderer tr;
     private Vector3 lastPosition;
     private Vector3 actualVelocity;
-
+    [SerializeField] private Vector3 playerMovment;
     /// <summary>
     /// Turns on the Rigidbody, the Action Map, and the movement listeners
     /// </summary>
@@ -58,7 +60,12 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
 
         lastPosition = transform.position;
+
+        
+
+
     }
+
 
     /// <summary>
     /// Turns off the event listeners when the player is dead
@@ -111,17 +118,30 @@ public class PlayerController : MonoBehaviour
         UnityEngine.Application.Quit();
     }
 
+    /// <summary>
+    /// player movments
+    /// </summary>
+    private void OnMove()
+    {
+        Vector2 inputMovement = movement.ReadValue<Vector2>();
+        playerMovment.x = inputMovement.x * _playerSpeed;
+        playerMovment.z = inputMovement.y * _playerSpeed;
+        //assinging y input to the z axis 
+    }
 
     /// <summary>
     /// Moves and rotates the player when isMoving and isTurning are true
     /// </summary>
     void Update()
     {
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
 
+        OnMove();
+        playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+        //player turns the direction of the camera 
+        playerMovment.y = 0f;
         // Apply movement to Rigidbody
-        rb.velocity = new Vector3(move.x * appliedSpeed, rb.velocity.y, move.z * appliedSpeed);
+        rb.velocity = new Vector3(playerMovment.x, rb.velocity.y, playerMovment.z);
+
 
         // Apply Gravity
         rb.velocity += Vector3.up * gravityValue * Time.deltaTime;
