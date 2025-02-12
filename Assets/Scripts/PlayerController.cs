@@ -43,7 +43,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastPosition;
     private Vector3 actualVelocity;
     [SerializeField] private Vector3 playerMovment;
+    [SerializeField] private Vector3 prevPlayerMovement;
 
+    private Vector2 prevInputMovement;
     [SerializeField] private float currentPlayerSpeed;
     public float MaxPlayerSpeed;
     [SerializeField] private float speedIncrease;
@@ -127,7 +129,11 @@ public class PlayerController : MonoBehaviour
         Vector2 inputMovement = movement.ReadValue<Vector2>();
         playerMovment.x = inputMovement.x * currentPlayerSpeed;
         playerMovment.z = inputMovement.y * currentPlayerSpeed;
+        prevPlayerMovement.x = prevInputMovement.x * currentPlayerSpeed;
+        prevPlayerMovement.z = prevInputMovement.y * currentPlayerSpeed;
         //assinging y input to the z axis 
+
+        print(prevInputMovement);
 
         //Controlling gradual speed increase and decrease
         if (inputMovement == Vector2.zero)
@@ -142,7 +148,7 @@ public class PlayerController : MonoBehaviour
             }
 
             //Player movement only takes the facing camera direction and current speed for motion
-            playerMovment = cameraTransform.forward * currentPlayerSpeed;
+            playerMovment = cameraTransform.forward * prevPlayerMovement.z + cameraTransform.right * prevPlayerMovement.x;
         }
         else
         {
@@ -157,6 +163,7 @@ public class PlayerController : MonoBehaviour
 
             //Player movement uses both camera direction and player input for motion
             playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+            prevInputMovement = movement.ReadValue<Vector2>();
         }
     }
 
