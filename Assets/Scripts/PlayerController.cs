@@ -77,7 +77,8 @@ public class PlayerController : MonoBehaviour
            
             rb.velocity = new Vector3(rb.velocity.x, _jumpValue, rb.velocity.z);
             actualVelocity = rb.velocity; // Store velocity at takeoff
-            
+            canDoubleJump = true;
+
             tr.DrawTrajectory(actualVelocity); // Draw trajectory
         }
         else if (canDoubleJump)
