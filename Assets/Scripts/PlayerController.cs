@@ -176,7 +176,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        print(isGrounded);
         OnMove();
         //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
         //player turns the direction of the camera 
