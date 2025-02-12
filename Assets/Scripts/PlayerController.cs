@@ -43,6 +43,10 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastPosition;
     private Vector3 actualVelocity;
     [SerializeField] private Vector3 playerMovment;
+
+    [SerializeField] private float currentPlayerSpeed;
+    public float MaxPlayerSpeed;
+    [SerializeField] private float speedIncrease;
     /// <summary>
     /// Turns on the Rigidbody, the Action Map, and the movement listeners
     /// </summary>
@@ -124,9 +128,18 @@ public class PlayerController : MonoBehaviour
     private void OnMove()
     {
         Vector2 inputMovement = movement.ReadValue<Vector2>();
-        playerMovment.x = inputMovement.x * _playerSpeed;
-        playerMovment.z = inputMovement.y * _playerSpeed;
+        playerMovment.x = inputMovement.x * currentPlayerSpeed;
+        playerMovment.z = inputMovement.y * currentPlayerSpeed;
         //assinging y input to the z axis 
+
+        if (currentPlayerSpeed < MaxPlayerSpeed)
+        {
+            currentPlayerSpeed += speedIncrease;
+        }
+        else
+        {
+            currentPlayerSpeed = MaxPlayerSpeed;
+        }
     }
 
     /// <summary>

@@ -25,7 +25,7 @@ public class PlatTarget : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("Hit Target");
-            playerController.appliedSpeed += 3;
+            playerController.MaxPlayerSpeed += 3;
             Destroy(gameObject);
            // Pspeed++;
         }
