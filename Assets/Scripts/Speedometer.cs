@@ -56,7 +56,11 @@ public class Speedometer : MonoBehaviour
     /// </summary>
     void Update()
     {
-        speed = PlayerScript.appliedSpeed; //Getting the player's current speed
+        //Calculates total current horizontal magnitude
+        float playerMoveAverage = Mathf.Sqrt(PlayerScript.rb.velocity.x * PlayerScript.rb.velocity.x + 
+            PlayerScript.rb.velocity.z * PlayerScript.rb.velocity.z);
+
+        speed = playerMoveAverage; //Getting the player's current speed
         displaySpeed = Mathf.Round(speed * 5f); //The flavor speed for the display
 
         SpeedText.text = displaySpeed.ToString(); //Sets display text to current, player speed
