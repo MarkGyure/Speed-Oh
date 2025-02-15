@@ -9,6 +9,7 @@ public class TrajectorRenderer : MonoBehaviour
    [SerializeField] private int resolution = 1; // Number of points in the line
    [SerializeField] private float timeStep = 0.05f; // Time between each point
    [SerializeField] private LayerMask groundMask;
+   [SerializeField] private GameObject LandingPoint;
 
     private void Start()
     {
@@ -40,6 +41,7 @@ public class TrajectorRenderer : MonoBehaviour
             // Stop drawing if trajectory hits ground
             if (Physics.Raycast(point, Vector3.down, 0.1f, LayerMask.GetMask("Ground")))
             {
+                
                 break;
             }
         }
@@ -54,5 +56,6 @@ public class TrajectorRenderer : MonoBehaviour
     public void ClearTrajectory()
     {
         lineRenderer.positionCount = 0; // Hide the line when grounded
+        
     }
 }
