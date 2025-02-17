@@ -404,7 +404,7 @@ MonoBehaviour:
   DialTransform: {fileID: 4052755945347044189}
   RadialImage: {fileID: 2916681239721363945}
   fovMin: 60
-  fovMax: 110
+  fovMax: 70
 --- !u!1 &3849233795102198423
 GameObject:
   m_ObjectHideFlags: 0
