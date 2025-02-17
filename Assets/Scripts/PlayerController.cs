@@ -167,8 +167,28 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            //Player movement uses both camera direction and player input for motion
-            playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+            if (!IsGrounded() && playerMovment.z < 0)
+            {
+                currentPlayerSpeed -= speedIncrease * 6;
+                playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
+            }
+            else if (IsGrounded() && playerMovment.z < 0 && rb.velocity.z <= 0) 
+            {
+                currentPlayerSpeed += speedIncrease * 3;
+                playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+            }
+            else if (IsGrounded() && playerMovment.z < 0)
+            {
+                playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
+            }
+            else
+            {
+                //Player movement uses both camera direction and player input for motion
+                playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+            }
+
+            
+
             prevInputMovement = movement.ReadValue<Vector2>();
         }
     }
