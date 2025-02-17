@@ -62,7 +62,7 @@ public class PauseMenu : MonoBehaviour
     public void MainMenu()
     {
         PauseActivate(); //Unpauses the game before returning
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("SamUI");
     }
 
     /// <summary>
