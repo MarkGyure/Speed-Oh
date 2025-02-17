@@ -167,7 +167,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if(!IsGrounded() && playerMovment.z < 0)
+            if(playerMovment.z < 0)
             {
                 currentPlayerSpeed -= speedIncrease * 6;
                 playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
