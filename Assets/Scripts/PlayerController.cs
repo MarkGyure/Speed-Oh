@@ -134,6 +134,10 @@ public class PlayerController : MonoBehaviour
         prevPlayerMovement.z = prevInputMovement.y * currentPlayerSpeed;
         //assinging y input to the z axis 
 
+        playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+        rb.AddForce(playerMovment);
+
+        
         //Controlling gradual speed increase and decrease
         if (inputMovement == Vector2.zero) //Slow down over time
         {
@@ -147,7 +151,7 @@ public class PlayerController : MonoBehaviour
             }
 
             //Player movement only takes the facing camera direction and current speed for motion
-            playerMovment = cameraTransform.forward * prevPlayerMovement.z + cameraTransform.right * prevPlayerMovement.x;
+            //playerMovment = cameraTransform.forward * prevPlayerMovement.z + cameraTransform.right * prevPlayerMovement.x;
         }
         else
         {
@@ -169,25 +173,29 @@ public class PlayerController : MonoBehaviour
 
             if (!IsGrounded() && playerMovment.z < 0)
             {
+                Debug.Log("working1");
                 currentPlayerSpeed -= speedIncrease * 6;
-                playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
+                //playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
             }
             else if (IsGrounded() && playerMovment.z < 0 && rb.velocity.z <= 0) 
             {
+                Debug.Log("working2");
                 currentPlayerSpeed += speedIncrease * 3;
-                playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+                //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
             }
             else if (IsGrounded() && playerMovment.z < 0)
             {
-                playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
+                Debug.Log("working3");
+                //playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
             }
             else
             {
+                Debug.Log("working4");
                 //Player movement uses both camera direction and player input for motion
-                playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+                //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
             }
-
-            
+        
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, MaxPlayerSpeed);
 
             prevInputMovement = movement.ReadValue<Vector2>();
         }
@@ -203,13 +211,13 @@ public class PlayerController : MonoBehaviour
         //player turns the direction of the camera 
         playerMovment.y = 0f;
         // Apply movement to Rigidbody
-        rb.velocity = new Vector3(playerMovment.x, rb.velocity.y, playerMovment.z);
+        //rb.velocity = new Vector3(playerMovment.x, rb.velocity.y, playerMovment.z);
 
 
         // Apply Gravity
         rb.velocity += Vector3.up * gravityValue * Time.deltaTime;
 
-        actualVelocity = rb.velocity; // Track movement velocity for trajectory
+        //actualVelocity = rb.velocity; // Track movement velocity for trajectory
 
         if (!IsGrounded())
         {
