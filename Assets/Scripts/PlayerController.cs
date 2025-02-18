@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -49,11 +50,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float currentPlayerSpeed;
     public float MaxPlayerSpeed;
     [SerializeField] private float speedIncrease;
+
+    [SerializeField] private Image pauseScreen;
+    private PauseMenu pauseScript;
     /// <summary>
     /// Turns on the Rigidbody, the Action Map, and the movement listeners
     /// </summary>
     void Start()
     {
+        //Getting the PauseMenu script from the current screen's UI (PauseScreen element)
+        pauseScript = pauseScreen.GetComponent<PauseMenu>();
+
         rb = _player.GetComponent<Rigidbody>();
         _playerInput.currentActionMap.Enable();
         look = _playerInput.currentActionMap.FindAction("Look");
@@ -135,50 +142,54 @@ public class PlayerController : MonoBehaviour
         //assinging y input to the z axis 
 
         //Controlling gradual speed increase and decrease
-        if (inputMovement == Vector2.zero) //Slow down over time
+        if (pauseScript.isPause == false)
         {
-            if (currentPlayerSpeed > 0)
+            print("Hi");
+            if (inputMovement == Vector2.zero) //Slow down over time
             {
-                currentPlayerSpeed -= speedIncrease;
-            }
-            else
-            {
-                currentPlayerSpeed = 0;
-            }
-
-            //Player movement only takes the facing camera direction and current speed for motion
-            playerMovment = cameraTransform.forward * prevPlayerMovement.z + cameraTransform.right * prevPlayerMovement.x;
-        }
-        else
-        {
-            if (prevPlayerMovement.z < 0) //Braking functionality
-            {
-                currentPlayerSpeed -= speedIncrease * 2;
-            }
-            else //Move normally, picking up speed as you go
-            {
-                if (currentPlayerSpeed < MaxPlayerSpeed)
+                if (currentPlayerSpeed > 0)
                 {
-                    currentPlayerSpeed += speedIncrease;
+                    currentPlayerSpeed -= speedIncrease;
                 }
                 else
                 {
-                    currentPlayerSpeed = MaxPlayerSpeed;
+                    currentPlayerSpeed = 0;
                 }
-            }
 
-            if(playerMovment.z < 0)
-            {
-                currentPlayerSpeed -= speedIncrease * 6;
-                playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
+                //Player movement only takes the facing camera direction and current speed for motion
+                playerMovment = cameraTransform.forward * prevPlayerMovement.z + cameraTransform.right * prevPlayerMovement.x;
             }
             else
             {
-                //Player movement uses both camera direction and player input for motion
-                playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+                if (prevPlayerMovement.z < 0) //Braking functionality
+                {
+                    currentPlayerSpeed -= speedIncrease * 2;
+                }
+                else //Move normally, picking up speed as you go
+                {
+                    if (currentPlayerSpeed < MaxPlayerSpeed)
+                    {
+                        currentPlayerSpeed += speedIncrease;
+                    }
+                    else
+                    {
+                        currentPlayerSpeed = MaxPlayerSpeed;
+                    }
+                }
+
+                if (playerMovment.z < 0)
+                {
+                    currentPlayerSpeed -= speedIncrease * 6;
+                    playerMovment = cameraTransform.forward * -playerMovment.z + cameraTransform.right * playerMovment.x;
+                }
+                else
+                {
+                    //Player movement uses both camera direction and player input for motion
+                    playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
+                }
+
+                prevInputMovement = movement.ReadValue<Vector2>();
             }
-            
-            prevInputMovement = movement.ReadValue<Vector2>();
         }
     }
 

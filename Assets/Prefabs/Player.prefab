@@ -451,6 +451,7 @@ MonoBehaviour:
   currentPlayerSpeed: 0
   MaxPlayerSpeed: 5
   speedIncrease: 0.01
+  UI: {fileID: 5634720030611223261, guid: 22552a653d49b5041a24cc03896a71af, type: 3}
 --- !u!1 &8036681704793134822
 GameObject:
   m_ObjectHideFlags: 0

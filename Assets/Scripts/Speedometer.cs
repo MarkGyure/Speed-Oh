@@ -37,6 +37,9 @@ public class Speedometer : MonoBehaviour
     [SerializeField] private float fovMin;
     [SerializeField] private float fovMax;
 
+    [SerializeField] private Image pauseScreen;
+    private PauseMenu pauseScript;
+
     /// <summary>
     /// Finds the player script and sets max speed detection on start
     /// </summary>
@@ -45,6 +48,9 @@ public class Speedometer : MonoBehaviour
         //Finding required objects
         PlayerScript = FindAnyObjectByType<PlayerController>();
         VirtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+
+        //Getting the PauseMenu script from the current screen's UI (PauseScreen element)
+        pauseScript = pauseScreen.GetComponent<PauseMenu>();
 
         //Setting the max speed threshold and initial display speed
         maxSpeed = 30f;
@@ -63,26 +69,30 @@ public class Speedometer : MonoBehaviour
         speed = playerMoveAverage; //Getting the player's current speed
         displaySpeed = Mathf.Round(speed * 5f); //The flavor speed for the display
 
-        SpeedText.text = displaySpeed.ToString(); //Sets display text to current, player speed
-
-        //Call angle functions
-        SetRadialFill();
-        SetSpeedRotation();
-
-        if (speed == 0)
+        //Functions if the game is unpaused
+        if (pauseScript.isPause == false)
         {
-            VirtualCamera.m_Lens.FieldOfView = fovMin;
-        }
-        else
-        {
-            if (VirtualCamera.m_Lens.FieldOfView < fovMax)
+            SpeedText.text = displaySpeed.ToString(); //Sets display text to current, player speed
+
+            //Call angle functions
+            SetRadialFill();
+            SetSpeedRotation();
+
+            if (speed == 0)
             {
-                VirtualCamera.m_Lens.FieldOfView = fovMin + speed;
+                VirtualCamera.m_Lens.FieldOfView = fovMin;
             }
             else
             {
-                VirtualCamera.m_Lens.FieldOfView = fovMax;
-            }    
+                if (VirtualCamera.m_Lens.FieldOfView < fovMax)
+                {
+                    VirtualCamera.m_Lens.FieldOfView = fovMin + speed;
+                }
+                else
+                {
+                    VirtualCamera.m_Lens.FieldOfView = fovMax;
+                }
+            }
         }
     }
 
