@@ -7,6 +7,7 @@
                        track the player's speed.
 *****************************************************************************/
 
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -29,16 +30,27 @@ public class Speedometer : MonoBehaviour
     private float speedNormalized;
 
     [SerializeField] private PlayerController PlayerScript;
+    [SerializeField] private CinemachineVirtualCamera VirtualCamera;
     [SerializeField] private TMP_Text SpeedText;
     [SerializeField] private Transform DialTransform;
     [SerializeField] private Image RadialImage;
+    [SerializeField] private float fovMin;
+    [SerializeField] private float fovMax;
+
+    [SerializeField] private Image pauseScreen;
+    private PauseMenu pauseScript;
 
     /// <summary>
     /// Finds the player script and sets max speed detection on start
     /// </summary>
     void Start()
     {
+        //Finding required objects
         PlayerScript = FindAnyObjectByType<PlayerController>();
+        VirtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+
+        //Getting the PauseMenu script from the current screen's UI (PauseScreen element)
+        pauseScript = pauseScreen.GetComponent<PauseMenu>();
 
         //Setting the max speed threshold and initial display speed
         maxSpeed = 30f;
@@ -50,14 +62,38 @@ public class Speedometer : MonoBehaviour
     /// </summary>
     void Update()
     {
-        speed = PlayerScript.appliedSpeed - 1; //Getting the player's current speed
-        displaySpeed = speed * 5f; //The flavor speed for the display
+        //Calculates total current horizontal magnitude
+        float playerMoveAverage = Mathf.Sqrt(PlayerScript.rb.velocity.x * PlayerScript.rb.velocity.x + 
+            PlayerScript.rb.velocity.z * PlayerScript.rb.velocity.z);
 
-        SpeedText.text = displaySpeed.ToString(); //Sets display text to current, player speed
+        speed = playerMoveAverage; //Getting the player's current speed
+        displaySpeed = Mathf.Round(speed * 5f); //The flavor speed for the display
 
-        //Call angle functions
-        SetRadialFill();
-        SetSpeedRotation();
+        //Functions if the game is unpaused
+        if (pauseScript.isPause == false)
+        {
+            SpeedText.text = displaySpeed.ToString(); //Sets display text to current, player speed
+
+            //Call angle functions
+            SetRadialFill();
+            SetSpeedRotation();
+
+            if (speed == 0)
+            {
+                VirtualCamera.m_Lens.FieldOfView = fovMin;
+            }
+            else
+            {
+                if (VirtualCamera.m_Lens.FieldOfView < fovMax)
+                {
+                    VirtualCamera.m_Lens.FieldOfView = fovMin + speed;
+                }
+                else
+                {
+                    VirtualCamera.m_Lens.FieldOfView = fovMax;
+                }
+            }
+        }
     }
 
     /// <summary>

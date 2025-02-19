@@ -314,6 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerInputInstance: {fileID: 8903266633031634545}
+  isPause: 0
   PauseBG: {fileID: 1727134906098576830}
   ButtonGroup: {fileID: 5584087514336125773}
 --- !u!114 &8903266633031634545
@@ -399,9 +400,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerScript: {fileID: 0}
+  VirtualCamera: {fileID: 0}
   SpeedText: {fileID: 4121244954968703884}
   DialTransform: {fileID: 4052755945347044189}
   RadialImage: {fileID: 2916681239721363945}
+  fovMin: 60
+  fovMax: 70
+  pauseScreen: {fileID: 1727134906098576830}
 --- !u!1 &3849233795102198423
 GameObject:
   m_ObjectHideFlags: 0
