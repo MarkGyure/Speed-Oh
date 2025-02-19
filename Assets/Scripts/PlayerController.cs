@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
 
     private InputAction movement;
     private InputAction look;
+    private InputAction brake;
 
     public Rigidbody rb;
     public TrajectorRenderer tr;
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour
         _playerInput.currentActionMap.Enable();
         look = _playerInput.currentActionMap.FindAction("Look");
         movement = _playerInput.currentActionMap.FindAction("Movement");
+        brake = _playerInput.currentActionMap.FindAction("Brake");
         
         cameraTransform = Camera.main.transform;
         
@@ -134,17 +136,16 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 inputMovement = movement.ReadValue<Vector2>();
         playerMovment.x = inputMovement.x * currentPlayerSpeed;
-        playerMovment.z = inputMovement.y * currentPlayerSpeed;
+        playerMovment.z = MathF.Abs(inputMovement.y * currentPlayerSpeed);
 
         //Previous inputs used before they were released
         prevPlayerMovement.x = prevInputMovement.x * currentPlayerSpeed;
-        prevPlayerMovement.z = prevInputMovement.y * currentPlayerSpeed;
+        prevPlayerMovement.z = MathF.Abs(prevInputMovement.y * currentPlayerSpeed);
         //assinging y input to the z axis 
 
         //Controlling gradual speed increase and decrease
         if (pauseScript.isPause == false)
         {
-            print("Hi");
             if (inputMovement == Vector2.zero) //Slow down over time
             {
                 if (currentPlayerSpeed > 0)
@@ -193,12 +194,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnBrake()
+    {
+        float isBraking = brake.ReadValue<float>();
+
+        if (isBraking > 0)
+        {
+            currentPlayerSpeed -= speedIncrease * 6;
+        }
+    }
+
     /// <summary>
     /// Moves and rotates the player when isMoving and isTurning are true
     /// </summary>
     void Update()
     {
         OnMove();
+        OnBrake();
         //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
         //player turns the direction of the camera 
         playerMovment.y = 0f;
