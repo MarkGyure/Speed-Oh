@@ -15,7 +15,7 @@ public class PauseMenu : MonoBehaviour
 {
     //Setting variables
     [SerializeField] private PlayerInput PlayerInputInstance;
-    private bool isPause = false;
+    public bool isPause = false;
 
     [SerializeField] private Image PauseBG;
     [SerializeField] private GameObject ButtonGroup;
