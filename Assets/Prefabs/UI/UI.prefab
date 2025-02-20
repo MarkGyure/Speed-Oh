@@ -1387,6 +1387,7 @@ GameObject:
   - component: {fileID: 4814775938828059044}
   - component: {fileID: 7069769234330953934}
   - component: {fileID: 2233503761730298188}
+  - component: {fileID: 2835609013665431720}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1556,18 +1557,30 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4589937502255128652}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: MainMenu
-        m_Mode: 1
+      - m_Target: {fileID: 2835609013665431720}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: SamUI
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2835609013665431720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6789888694286609558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c13d54f4b5fdc4142b57aa136890dead, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7033955578952403449
 GameObject:
   m_ObjectHideFlags: 0
