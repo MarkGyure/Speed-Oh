@@ -200,7 +200,10 @@ public class PlayerController : MonoBehaviour
 
         if (isBraking > 0)
         {
-            currentPlayerSpeed -= speedIncrease * 6;
+            if (currentPlayerSpeed > 0)
+            {
+                currentPlayerSpeed -= speedIncrease * 6;
+            }
         }
     }
 
@@ -214,8 +217,7 @@ public class PlayerController : MonoBehaviour
         //playerMovment = cameraTransform.forward * playerMovment.z + cameraTransform.right * playerMovment.x;
         //player turns the direction of the camera 
         playerMovment.y = 0f;
-        // Apply movement to Rigidbody
-        rb.velocity = new Vector3(playerMovment.x, rb.velocity.y, playerMovment.z);
+        
 
 
         // Apply Gravity
@@ -234,6 +236,12 @@ public class PlayerController : MonoBehaviour
         }
 
         lastPosition = transform.position;
+    }
+
+    private void FixedUpdate()
+    {
+        // Apply movement to Rigidbody
+        rb.velocity = new Vector3(playerMovment.x, rb.velocity.y, playerMovment.z);
     }
 
     private bool IsGrounded()
